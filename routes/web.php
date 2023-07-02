@@ -38,6 +38,10 @@ Route::get('/update-order', function(){
     Illuminate\Support\Facades\Artisan::call("updatePembelian");
 });
 
+Route::get('/update-pesanan', function(){
+    Illuminate\Support\Facades\Artisan::call("updatePesanan");
+});
+
 Route::get('/getservice', function(){
     Illuminate\Support\Facades\Artisan::call("Service");
 });

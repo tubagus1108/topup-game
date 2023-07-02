@@ -146,8 +146,8 @@ class updatePembelian extends Command
 
                         if ($transfer['type'] == "credit" && $transfer['amount']['value'] == $pembayaran->harga) {
                             try {
-                                $requestPesan = $this->msg($api->nomor_admin,$pesanAdmin);
-                                $pesanMember = $this->msg($data->no_pembeli, $pesan);
+                                $this->msg($api->nomor_admin,$pesanAdmin);
+                                $this->msg($data->no_pembeli, $pesan);
 
                                 Pembayaran::where('order_id', $data->order_id)->update(['status' => 'Lunas']);
 
@@ -229,8 +229,8 @@ class updatePembelian extends Command
 
                                 if ($incomingTransfer == "INCOMING TRANSFER" && $dataMasuk == $pembayaran->harga) { //cek apakah ada status incoming transfer jika ada push ke array
                                     try {
-                                        $requestPesan = $this->msg($api->nomor_admin,$pesanAdmin);
-                                        $pesanMember = $this->msg($data->no_pembeli, $pesan);
+                                        $this->msg($api->nomor_admin,$pesanAdmin);
+                                        $this->msg($data->no_pembeli, $pesan);
 
                                             if($layanan->provider == "digiflazz"){
                                                 $provider_order_id = rand(1, 10000);
@@ -302,8 +302,8 @@ class updatePembelian extends Command
                         foreach($mutasi['response'] as $transaksi){
                             if($transaksi['type'] == "credit" && $transaksi['amount'] == $pembayaran->harga){
                                 try {
-                                    $requestPesan = $this->msg($api->nomor_admin,$pesanAdmin);
-                                    $pesanMember = $this->msg($data->no_pembeli, $pesan);
+                                    $this->msg($api->nomor_admin,$pesanAdmin);
+                                    $this->msg($data->no_pembeli, $pesan);
 
                                             if($layanan->provider == "digiflazz"){
                                                 $provider_order_id = rand(1, 10000);
@@ -369,15 +369,16 @@ class updatePembelian extends Command
         $api = \DB::table('setting_webs')->where('id',1)->first();
 
         $data = [
-            'api_key' => $api->wa_key,
-            'sender'  => $api->wa_number,
-            'number'  => "$nomor",
-            'message' => "$msg"
+            // 'api_key' => $api->wa_key,
+            "session" => 'mysession',
+            // 'sender'  => $api->wa_number,
+            'to'  => "$nomor",
+            'text' => "$msg"
         ];
 
         $curl = curl_init();
         curl_setopt_array($curl, array(
-          CURLOPT_URL => "https://wa2.wisender.link/send-message",
+          CURLOPT_URL => "http://localhost:5001/send-message",
           CURLOPT_RETURNTRANSFER => true,
           CURLOPT_ENCODING => "",
           CURLOPT_MAXREDIRS => 10,

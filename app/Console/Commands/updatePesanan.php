@@ -52,20 +52,19 @@ class updatePesanan extends Command
         $pesanan = Pembelian::Where('status', 'Menunggu')
                              ->orWhere('status', 'Sukses')
                              ->get();
-        
         $digiFlazz = new digiFlazzController;
         $vip = new VipResellerController;
         $apigames = new ApiGamesController;
         $july = new JulyhyusController;
-        
+
         foreach($pesanan as $data)
         {
-            $pesan = "Pembelian *$data->layanan* Telah Berhasil Dikirim, Silahkan Cek Akun Anda, Terima kasih Sudah Order\n\n".
+            $pesan = "Pembelian *$data->layanan* dengan nomor invoice *$data->order_id* Telah Berhasil Dikirim, Silahkan Cek Akun Anda, Terima kasih Sudah Order\n\n".
                      "Jika Pesanan Anda Belum Masuk Harap Hubungi Admin\n".
                      "Whatsapp : ".$api->nomor_admin;
 
             $pembayaran = Pembayaran::where('order_id', $data->order_id)->first();
-
+            // dd($pembayaran);
             if ($data->tipe_transaksi == "game") {
                 $layanan = Layanan::where('layanan', $data->layanan)->first();
             } else if ($data->tipe_transaksi == "pulsa") {
@@ -76,9 +75,9 @@ class updatePesanan extends Command
                 $provider_order_id = $data->provider_order_id;
                 $uid = $data->user_id;
                 $zone = $data->zone;
-            
+
                 $provider_order_id = $data->provider_order_id;
-                
+
                 if($layanan->provider == "digiflazz"){
                     $checking = $digiFlazz->status($provider_order_id, $providerId, $uid, $zone);
                 }else if($layanan->provider == "apigames"){
@@ -102,7 +101,7 @@ class updatePesanan extends Command
                 if($status_check){
                     if($status_pembelian == "Sukses"){
                         if(date('Y-m-d',strtotime($data->created_at)) == date('Y-m-d')){
-                            $requestPesan = $this->msg($pembayaran->no_pembeli,$pesan); 
+                            $this->msg($pembayaran->no_pembeli,$pesan);
                         }
                         Pembelian::where('provider_order_id', $provider_order_id)
                             ->update(['status' => $status_pembelian]);
@@ -111,7 +110,7 @@ class updatePesanan extends Command
                             ->update(['status' => $status_pembelian, 'log' => json_encode($checking)]);
                     }
                 }else{
-                                    
+
                 }
             }catch (\Exception $e){
                 continue;
@@ -120,21 +119,22 @@ class updatePesanan extends Command
         }
 
     }
-    
+
     public function msg($nomor, $msg)
     {
         $api = \DB::table('setting_webs')->where('id',1)->first();
-        
+
         $data = [
-            'api_key' => $api->wa_key,
-            'sender'  => $api->wa_number,
-            'number'  => "$nomor",
-            'message' => "$msg"
+            // 'api_key' => $api->wa_key,
+            "session" => 'mysession',
+            // 'sender'  => $api->wa_number,
+            'to'  => "$nomor",
+            'text' => "$msg"
         ];
-        
+
         $curl = curl_init();
         curl_setopt_array($curl, array(
-          CURLOPT_URL => "https://wa2.wisender.link/send-message",
+          CURLOPT_URL => "http://localhost:5001/send-message",
           CURLOPT_RETURNTRANSFER => true,
           CURLOPT_ENCODING => "",
           CURLOPT_MAXREDIRS => 10,
@@ -145,9 +145,9 @@ class updatePesanan extends Command
           CURLOPT_POSTFIELDS => json_encode($data),
           CURLOPT_HTTPHEADER => array('Content-Type: application/json')
         ));
-        
+
         $response = curl_exec($curl);
-        
+
         curl_close($curl);
         return $response;
     }

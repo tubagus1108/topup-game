@@ -538,7 +538,6 @@ class OrderController extends Controller
                     $digi = new digiFlazzController;
                     $provider_order_id = rand(1, 100000);
                     $order = $digi->order($request->uid, $request->zone, $dataLayanan->provider_id, $provider_order_id);
-
                     if ($order['data']['status'] == "Pending" || $order['data']['status'] == "Sukses") {
                         $order['status'] = true;
                     } else {
@@ -565,53 +564,15 @@ class OrderController extends Controller
                     } else {
                         $order['status'] = false;
                     }
-                }else if($dataLayanan->provider == "joki"){
+                }
+                else if($dataLayanan->provider == "joki"){
                     $provider_order_id = '';
                     $order['status'] = true;
                 }
 
+        if($order['status']){
 
-            if($order['status']){
-
-            // PESAN JOKI CUSTOM
-
-            //   if($request->ktg_tipe !== 'joki'){
-
-            //         $pesanSukses =
-            //         "*Pembelian Sukses*\n\n" .
-            //         "No Invoice: *$order_id*\n" .
-            //         "Layanan: *$dataLayanan->layanan*\n" .
-            //         "ID : *$request->uid*\n" .
-            //         "Server : *$request->zone*\n" .
-            //         "Nickname : *$request->nickname*\n" .
-            //         "Harga: *Rp. " . number_format($dataLayanan->harga, 0, '.', ',') . "*\n" .
-            //         "Status Pembelian: *Sukses*\n" .
-            //       "Metode Pembayaran: *$request->payment_method*\n\n" .
-            //       "*Invoice* : " . env("APP_URL") . "/pembelian/invoice/$order_id\n\n" .
-            //       "INI ADALAH PESAN OTOMATIS";
-
-            //       $pesanSuksesAdmin =
-            //         "*Pembelian Sukses*\n\n" .
-            //         "No Invoice: *$order_id*\n" .
-            //         "Layanan: *$dataLayanan->layanan*\n" .
-            //         "ID : *$request->uid*\n" .
-            //         "Server : *$request->zone*\n" .
-            //         "Nickname : *$request->nickname*\n" .
-            //         "Harga: *Rp. " . number_format($dataLayanan->harga, 0, '.', ',') . "*\n" .
-            //         "Status Pembelian: *Sukses*\n" .
-            //       "Metode Pembayaran: *$request->payment_method*\n\n" .
-
-            //       "*Invoice* : " . env("APP_URL") . "/pembelian/invoice/$order_id\n\n" .
-            //       "INI ADALAH PESAN OTOMATIS";
-
-            //   }else{
-
-            //       $pesanSukses = '';
-            //       $pesanSuksesAdmin = '';
-
-            //   }
-
-                $pesanSukses =
+            $pesanSukses =
                 "*Pembelian Sukses*\n\n" .
                 "No Invoice: *$order_id*\n" .
                 "Layanan: *$dataLayanan->layanan*\n" .
@@ -690,7 +651,8 @@ class OrderController extends Controller
 
                 }
 
-            }else{
+            }
+            else{
                 return response()->json([
                     'status' => false,
                     'data' => 'Server Error'
