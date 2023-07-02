@@ -368,7 +368,6 @@ class OrderController extends Controller
 
 
                 }
-                dd($listchannel);
                 unset($listchannel['OVO']);
 
 

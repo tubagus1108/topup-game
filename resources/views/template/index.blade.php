@@ -249,7 +249,7 @@
                 </div>
             </section>
 
-            <section class="px-2 mt-5" style="">
+            {{-- <section class="px-2 mt-5" style="">
                 <h4 class="mb-2 text-white" style="font-size: 1.7rem;">Joki MLBB</h4>
                 <div class="product row mt-4">
 
@@ -270,7 +270,7 @@
                     @endforeach
 
                 </div>
-            </section>
+            </section> --}}
 
         </div>
 

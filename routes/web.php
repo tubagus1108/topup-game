@@ -34,7 +34,7 @@ use App\Http\Controllers\Admin\SettingWebController;
 use App\Http\Controllers\Admin\DataJokiController;
 use App\Http\Controllers\Admin\OrderManualController;
 
-Route::get('/tes', function(){
+Route::get('/update-order', function(){
     Illuminate\Support\Facades\Artisan::call("updatePembelian");
 });
 

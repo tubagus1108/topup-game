@@ -49,7 +49,7 @@
             margin-top:13px;
             margin-left:5px;
         }
-        
+
         button.accordion-button{
             outline:none!important;
             border:none!important;
@@ -136,7 +136,7 @@
         .method-list.active:before {
             background: #3b3b3b!important;
         }
-        
+
         .btn-order {
             display: inline-block;
             border: 0;
@@ -147,13 +147,13 @@
             /* Important part */
             position: relative;
             transition: padding-right .3s ease-out;
-                    
+
                 }
-                
+
         .btn-order.loading {
             padding-right: 40px;
         }
-        
+
         .btn-order.loading:after {
             content: "";
             position: absolute;
@@ -167,18 +167,18 @@
             border-top-color: #FFF;
             animation: spin .6s infinite linear, grow .3s forwards ease-out;
         }
-        @keyframes  spin { 
+        @keyframes  spin {
             to {
                 transform: rotate(359deg);
             }
         }
-        @keyframes  grow { 
+        @keyframes  grow {
             to {
                 width: 16px;
                 height: 16px;
             }
         }
-        
+
         .shadow-form {
             box-shadow: 0 4px 80px hsla(0,0%,77%,.13), 0 1.6711px 33.4221px hsla(0,0%,77%,.093), 0 0.893452px 17.869px hsla(0,0%,77%,.077), 0 0.500862px 10.0172px hsla(0,0%,77%,.065), 0 0.266004px 5.32008px hsla(0,0%,77%,.053), 0 0.11069px 2.21381px hsla(0,0%,77%,.037);
         }
@@ -207,11 +207,11 @@
                         </div>
                     </div>
                 </div>
-            
+
             <div class="hasil-cari">
                 <ul class="position-absolute resultsearch shadow dropdown-menu" aria-labelledby="dropsearchdown"></ul>
             </div>
-    
+
             <button class="navbar-toggler border-0 d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar">
               <span><i class="fa fa-bars-staggered text-light"></i></span>
             </button>
@@ -249,7 +249,7 @@
                 <p class="card-text">Rp {{ number_format(Auth::user()->balance, 0, ',', '.') }}</p>
              </div>
           </div>
-                    
+
           <div class"mt-2">
                                                           </div>
                         <button onclick="logout();" class="btn bg-white border-0 text-danger mt-2">Logout</button>
@@ -280,11 +280,11 @@
                         </div>
                     </div>
                 </div>
-            
+
             <div class="hasil-cari">
                 <ul class="position-absolute resultsearch shadow dropdown-menu" aria-labelledby="dropsearchdown"></ul>
             </div>
-    
+
             <button class="navbar-toggler border-0 d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar">
               <span><i class="fa fa-bars-staggered text-light"></i></span>
             </button>
@@ -335,11 +335,11 @@
                         </div>
                     </div>
                 </div>
-            
+
             <div class="hasil-cari">
                 <ul class="position-absolute resultsearch shadow dropdown-menu" aria-labelledby="dropsearchdown"></ul>
             </div>
-    
+
             <button class="navbar-toggler border-0 d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar">
               <span><i class="fa fa-bars-staggered text-light"></i></span>
             </button>
@@ -394,7 +394,7 @@
             <input type="hidden" id="nominal">
             <input type="hidden" id="metode">
             <input type="hidden" id="ktg_tipe" value="{{$kategori->tipe}}">
-        	
+
         <div class="card bg-card border-0 mb-4 shadow-form">
     			<div class="px-3 py-3">
     				<div class="d-flex border-bottom w-full num-page">
@@ -403,7 +403,7 @@
     				</div>
 				<div class="row">
                     @if($kategori->server_id && $kategori->kode != "life-after" && $kategori->kode != "genshin-impact" && $kategori->kode != "ragnarok-m" && $kategori->kode != "tof")
-					
+
 					<div class="col-6">
 						<input type="text" class="form-control" placeholder="Masukkan User ID" id="user_id" name="user_id" autocomplete="off">
 					</div>
@@ -441,13 +441,13 @@
                           <option value="520010">LabyrinthSea (SEA)</option>
 						</select>
 					</div>
-					
+
 					@elseif($kategori->kode == "tof")
-					
+
 					<div class="col-6">
 						<input type="text" class="form-control" placeholder="Masukkan User ID" id="user_id" name="user_id" autocomplete="off">
 					</div>
-					
+
 					<div class="col-6">
 						<select class="form-control" id="zone">
 						    <option value="">Pilih Server</option>
@@ -595,7 +595,7 @@
                             <option value="memory_of_faith">Memory Of Faith</option>
 						</select>
 					</div>
-					
+
 					@elseif($kategori->kode == "mobile-legends")
 					<div class="col-6">
 						<input type="text" class="form-control" placeholder="Masukkan User ID" id="user_id" name="user_id" autocomplete="off">
@@ -675,21 +675,21 @@
 					<div class="col-12">
 						<input type="text" class="form-control" placeholder="Masukkan Nomor LinkAja Anda" id="user_id" name="user_id" autocomplete="off">
 					</div>
-					
+
 					@else
-					
-					
+
+
     					@if(in_array($kategori->tipe,['game','voucher','pulsa','e-money']))
-    					
-    					   	
+
+
     					<div class="col-12">
     						<input type="text" class="form-control" placeholder="Masukkan User ID" id="user_id" name="user_id" autocomplete="off">
     					</div>
-    				    
-    				    
+
+
     				    @else
-    				
-    				    
+
+
     				    <div class="row">
     				        <div class="col-12 mb-2">
     				            <input type="text" class="form-control" placeholder="Masukkan Email" id="email_joki" name="email_joki" autocomplete="off">
@@ -698,7 +698,7 @@
     				            <input type="password" class="form-control" placeholder="Masukkan Password" id="password_joki" name="password_joki" autocomplete="off">
     				        </div>
     				    </div>
-    				    
+
     				    <div class="row">
     				        <div class="col-12 mb-2">
     				            <select class="form-control" id="loginvia_joki" name="loginvia_joki">
@@ -713,8 +713,8 @@
     				           <input type="text" class="form-control" placeholder="Masukkan Nickname" id="nickname_joki" name="nickname_joki" autocomplete="off">
     				        </div>
     				    </div>
-    				    
-    				    
+
+
     				    <div class="row">
     				        <div class="col-12 mb-2">
     				            <input type="text" class="form-control" placeholder="Min Request 3 Hero (Diusahakan)" id="request_joki" name="request_joki" autocomplete="off">
@@ -723,22 +723,22 @@
     				           <input type="text" class="form-control" placeholder="Catatan untuk Penjoki" id="catatan_joki" name="catatan_joki" autocomplete="off">
     				        </div>
     				    </div>
-    				    
-    					
+
+
     					@endif
-					
+
 					@endif
-					
-					
-					
-					
-					
+
+
+
+
+
 					<p class="panduan">{!! $kategori->deskripsi_field !!}</p>
-					
+
 				</div>
 			</div>
 			</div>
-			
+
 			<div class="card bg-card border-0 mb-4 shadow-form">
     			<div class="px-3 py-3">
     				<div class="num-page border-bottom">
@@ -746,18 +746,18 @@
     					<p>Pilih Item</p>
     				</div>
     				<div class="row mt-4">
-				    
+
 				    @foreach($nominal as $nom)
-				    
+
 					<div class="col-6 col-md-3 col-lg-4 mb-3">
 						<div id="product-{{$nom->id}}" class="p-2 px-3 cursor-pointer bg-product product-list" product-id="{{$nom->id}}">
 							<b class="d-block">{{ $nom->layanan }}</b>
 							 <span class="harga">Rp {{ number_format($nom->harga) }},-</span>
 						</div>
 					</div>
-										
-					@endforeach					
-					
+
+					@endforeach
+
 				</div>
 			</div>
 		</div>
@@ -769,7 +769,7 @@
     					<p>Pilih Pembayaran</p>
     				</div>
     				<div class="row mt-4">
-				
+
 				@auth
 				<div class="accordion mb-3" id="accordionExample-1" style="box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),0 2px 4px -1px rgba(0, 0, 0, 0.06);border-radius: 6px;">
         					<div class="accordion-item border-0">
@@ -808,7 +808,7 @@
 					</div>
 				</div>
 				@endauth
-				
+
 				<div class="accordion mb-3" id="accordionExample-1" style="box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),0 2px 4px -1px rgba(0, 0, 0, 0.06);border-radius: 6px;">
         					<div class="accordion-item border-0">
 						<h2 class="accordion-header" id="heading-qris">
@@ -853,7 +853,7 @@
                         @endforeach
 					</div>
 				</div>
-				
+
 				<div class="accordion mb-3" id="accordionExample-1" style="box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),0 2px 4px -1px rgba(0, 0, 0, 0.06);border-radius: 6px;">
 					<div class="accordion-item border-0">
 						<h2 class="accordion-header" id="heading-ewallet">
@@ -898,8 +898,8 @@
                         @endforeach
 					</div>
 				</div>
-				
-				<div class="accordion mb-3" id="accordionExample-1" style="box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),0 2px 4px -1px rgba(0, 0, 0, 0.06);border-radius: 6px;">
+
+				{{-- <div class="accordion mb-3" id="accordionExample-1" style="box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),0 2px 4px -1px rgba(0, 0, 0, 0.06);border-radius: 6px;">
 					<div class="accordion-item border-0">
 						<h2 class="accordion-header" id="heading-convenience-store">
 							<button class="accordion-button collapsed bg-white-custom text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-convenience-store" aria-expanded="false" aria-controls="collapse-convenience-store">
@@ -942,9 +942,9 @@
 						@endif
 						@endforeach
 					</div>
-				</div>
-								
-				<div class="accordion mb-3" id="accordionExample-1" disabled style="box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),0 2px 4px -1px rgba(0, 0, 0, 0.06);border-radius: 6px;">
+				</div> --}}
+
+				{{-- <div class="accordion mb-3" id="accordionExample-1" disabled style="box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),0 2px 4px -1px rgba(0, 0, 0, 0.06);border-radius: 6px;">
 					<div class="accordion-item border-0">
 						<h2 class="accordion-header" id="heading-virtual-account">
 							<button class="accordion-button collapsed bg-white-custom text-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-virtual-account" aria-expanded="false" aria-controls="collapse-virtual-account">
@@ -987,12 +987,12 @@
 						@endif
 						@endforeach
 					</div>
-				</div>
+				</div> --}}
 			</div>
 		</div>
 	</div>
-							
-			<div class="card bg-card border-0 shadow-form">			
+
+			<div class="card bg-card border-0 shadow-form">
     			<div class="px-3 pt-3" style="margin-bottom: 15px;">
     				<div class="num-page border-bottom">
     					<div>4</div>
@@ -1007,9 +1007,9 @@
             </div>
 	    </form>
     </div>
-    
+
 </div>
-        
+
 
 
 
@@ -1019,7 +1019,7 @@
 @push('custom_script')
 
 <script>
-function removeClass(){  
+function removeClass(){
     btnorder.className = btnorder.className.replace(new RegExp('(?:^|\\s)loading(?!\\S)'), '');
 }
 
@@ -1033,7 +1033,7 @@ btnorder.addEventListener("click", function() {
 </script>
 
 <script>
-    
+
      function changeHarga(harga,hargareal)
     {
         $("#SALDO").html(harga);
@@ -1056,23 +1056,23 @@ btnorder.addEventListener("click", function() {
         $("#ALFAMIDI").html(harga);
         $("#INDOMARET").html(harga);
     }
-    
-    
+
+
      $('.accordion-button').css('pointer-events','none');
      $('.accordion-header').addClass('hide-payment');
-     
-    
+
+
     $('.product-list').click(function(){
-        
+
         $('.accordion-button').css('pointer-events','auto');
         $('.accordion-header').removeClass('hide-payment');
-        
+
        const prd = $(this).attr('product-id');
        $('.product-list').removeClass('active');
        $(this).addClass('active');
-       
+
        $('#nominal').val(prd);
-       
+
        $.ajax({
                     url: "<?php echo route('ajax.price') ?>",
                     dataType: "json",
@@ -1085,40 +1085,40 @@ btnorder.addEventListener("click", function() {
                         changeHarga(res.harga);
                     }
                 })
-       
-       
+
+
     });
-    
-    
+
+
     $('.accordion-header').click(function(){
-       
+
         if($(this).hasClass('hide-payment')){
-            
+
             toastr.options.positionClass = "toast-top-right";
             toastr.options.closeButton = true;
-            
+
             toastr.warning('Mohon untuk pilih item terlebih dahulu');
-            
+
         }
-        
+
     });
-    
-    
-    
+
+
+
     $('.method-list').click(function(){
-        
+
        const mtd = $(this).attr('method-id');
        $('.method-list').removeClass('active');
        $(this).addClass('active');
-       
+
        $('#metode').val(mtd);
-       
-      
-       
+
+
+
     });
-    
+
     $("#btn-order").on("click", function() {
-        
+
 
             var uid = $("#user_id").val();
             var zone = $("#zone").val();
@@ -1134,7 +1134,7 @@ btnorder.addEventListener("click", function() {
             // var email = $("input[name='email']").val();
             var voucher = $("#voucher").val();
             var ktg_tipe = $("#ktg_tipe").val();
-           
+
             $.ajax({
                 url: "<?php echo route('ajax.confirm-data') ?>",
                 dataType: "JSON",
@@ -1279,10 +1279,10 @@ btnorder.addEventListener("click", function() {
                 }
             })
         })
-        
-        
-        
-        
+
+
+
+
         $("#btn-check").on("click", function(){
             var voucher = $("#voucher").val();
             var service = $("#nominal").val();
@@ -1313,8 +1313,8 @@ btnorder.addEventListener("click", function() {
                         // color: '#fff',
                         showConfirmButton: true,
                         allowOutsideClick: true,
-                    });                   
-                    
+                    });
+
                     if(res.harga){
                         changeHarga(res.harga);
                     }
@@ -1326,15 +1326,15 @@ btnorder.addEventListener("click", function() {
                         icon: 'error',
                         // background: '#222831',
                         // color: '#fff'
-                    });                    
+                    });
                 }
-            }) 
+            })
         });
-        
 
-    
-    
-    
+
+
+
+
 </script>
 
 

@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ !$config ? '' : $config->judul_web }}</title>
-    
+
     <meta name="title" content="{{ !$config ? '' : $config->judul_web }}">
     <meta name="description" content="{{ !$config ? '' : $config->deskripsi_web }}">
-    
+
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ ENV('APP_URL') }}">
     <meta property="og:title" content="{{ !$config ? '' : $config->judul_web }}">
@@ -20,7 +20,7 @@
     <meta name="author" content="{{ ENV('APP_NAME') }}">
     <meta name="coverage" content="Worldwide">
     <meta name="apple-mobile-web-app-title" content="{{ !$config ? '' : $config->judul_web }}">
-    
+
     <link rel="shortcut icon" href="{{ url('') }}{{ !$config ? '' : $config->logo_favicon }}">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
@@ -32,12 +32,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css">
 
-    
-    
+
+
     <meta name="theme-color" content="#000000">
     <meta name="msapplication-navbutton-color" content="#000000">
     <meta name="apple-mobile-web-app-status-bar-style" content="#000000">
-    
+
     <style>
         @import  url('https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/2.0.46/css/materialdesignicons.css');
         @import  url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
@@ -48,11 +48,11 @@
             --warna_3: <?= $config->warna3; ?>;
             --warna_4: <?= $config->warna4; ?>;
         }
-        textarea:hover, 
-        input:hover, 
-        textarea:active, 
-        input:active, 
-        textarea:focus, 
+        textarea:hover,
+        input:hover,
+        textarea:active,
+        input:active,
+        textarea:focus,
         input:focus,
         button:focus,
         button:active,
@@ -71,7 +71,7 @@
             background: var(--warna_1);
             font-family: Roboto;
         }
-        
+
         .bg-primary {
             background: var(--warna_2) !important;
         }
@@ -85,7 +85,7 @@
             color: #fff;
             background: var(--warna_2);
         }
-        
+
         .navbar {
             color: #fff;
             background: var(--warna_2);
@@ -103,7 +103,7 @@
             color: #fff;
             background: #0d6efd!important;
         }
-        
+
         .content-body {
             padding: 0 5px;
             padding-top: 80px;
@@ -115,7 +115,7 @@
                 padding-top: 80px;
             }
         }
-        
+
         .resultsearch {
             width: 100%;
             inset: 0px auto auto 0px;
@@ -231,7 +231,7 @@
 }
 
 .card-product {
-    
+
     margin-bottom: -30px;
     gap: 0.5rem;
 }
@@ -443,7 +443,7 @@
 
 <body>
     <div class="content">
-    	
+
         @yield('content')
         <div class="content-body">
           <footer class="footer mt-3">
@@ -455,9 +455,9 @@
                         <p>Top Up Game Favoritmu termurah hanya di {{ ENV('APP_NAME') }}, seperti Top Up Mobile Legends, Top Up FF (Free Fire) dan Top Up Game Favoritmu lainnya dengan proses cepat dan otomatis</p>
                     </div>
                 </div>
-                
 
-                
+
+
                 <div class="col-md-3 col-lg-4 p-4">
                   <h5 class="mt-2 mb-1">Metode Pembayaran</h5>
                   <div class="mt-3">
@@ -478,7 +478,7 @@
                     <img src="/assets/payment/sinarmasva.webp" class="kbrstore-pgimg">
                     <img src="/assets/payment/dana.png" class="kbrstore-pgimg">
                     <img src="/assets/payment/Gopay.webp" class="kbrstore-pgimg">
-                    
+
                 </div>
             </div>
             <div class="col-md-3 col-lg-2 p-4">
@@ -489,10 +489,10 @@
                  <i class="fa-solid fa-house"></i><a href="{{url('')}}" class="text-white text-decoration-none active"> Home</a><br>
                  <i class="fa-solid fa-magnifying-glass"></i><a href="{{url('/cari')}}" class="text-white text-decoration-none ">
                  Cek Pesanan</a><br>
-                 
+
                  <i class="fa fa-list"></i><a href="{{url('/daftar-harga')}}" class="text-white text-decoration-none ">
                  Daftar Harga</a><br>
-                 
+
                  <i class="fa-solid fa-clock-rotate-left"></i><a href="{{url('/riwayat-pembelian')}}" class="text-white text-decoration-none ">
                  Riwayat Pembelian</a><br>
                  <i class="fa-solid fa-wallet"></i><a href="{{url('/deposit')}}" class="text-white text-decoration-none ">
@@ -540,7 +540,7 @@
 <!---live chat-->
 <div class="fab-container">
     <div class="fab fab-icon-holder"  style="background-color: #fff;">
-        <img src="https://mogame.my.id/upload/callcenter.png" style="width: 100%; height: auto; display: block; margin: 0 auto;">
+        <img src="{{asset('assets/logo/Support service with headphones. Customer Support service logo template.png')}}" style="width: 100%; height: auto; display: block; margin: 0 auto;">
     </div>
     <ul class="fab-options">
         <li>
@@ -570,7 +570,7 @@
             </a>
         </li>
         <!--end-->
-        
+
     </footer>
 </div>
 </div>
@@ -585,7 +585,7 @@
               <p>Apakah anda yakin untuk keluar dari akun ?</p>
               <div class="text-end">
                   <form method="POST" action="{{url('/logout')}}">
-                     @csrf		                   
+                     @csrf
                      <button type="button" class="btn btn-default text-white" data-bs-dismiss="modal">No</button>
                      <button type="submit" class="btn btn-danger">Yes</button>
                  </form>
@@ -643,7 +643,7 @@
         }, 100);
     }
 })
-    
+
 </script>
 
 <script>

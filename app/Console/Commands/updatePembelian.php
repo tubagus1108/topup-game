@@ -143,8 +143,8 @@ class updatePembelian extends Command
                     $list_transaksi = $getData['data']['success'];
 
                     foreach ($list_transaksi as $transfer) {
-                        if ($transfer['type'] == "credit" && $transfer['amount']['value'] == $pembayaran->harga) {
 
+                        if ($transfer['type'] == "credit" && $transfer['amount']['value'] == $pembayaran->harga) {
                             try {
                                 $requestPesan = $this->msg($api->nomor_admin,$pesanAdmin);
                                 $pesanMember = $this->msg($data->no_pembeli, $pesan);
