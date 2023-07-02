@@ -166,24 +166,25 @@ class OrderController extends Controller
 
             if(in_array($dataKategori->kode, $daftarGameValidasi)){
                 if ($dataKategori->kode == 'mobile-legends') {
-                    $data = $apicheck->check($request->uid, $request->zone, 'Mobile Legends');
+                    $data = $apicheck->check($request->uid, $request->zone, $dataKategori->kode);
                 } else if ($dataKategori->kode == 'mlbb') {
-                     $data = $apicheck->check($request->uid, $request->zone, 'Mobile Legends');
+                     $data = $apicheck->check($request->uid, $request->zone, $dataKategori->kode);
                 } else if($dataKategori->kode == "free-fire"){
-                    $data = $apicheck->check($request->uid, null, 'Free Fire');
+                    $data = $apicheck->check($request->uid, null, $dataKategori->kode);
                 } else if($dataKategori->kode == "point-blank"){
-                    $data = $apicheck->check($request->uid, null, 'Point Blank');
+                    $data = $apicheck->check($request->uid, null, $dataKategori->kode);
                 } else if($dataKategori->kode == "arena-of-valor"){
-                    $data = $apicheck->check($request->uid, null, 'AOV');
+                    $data = $apicheck->check($request->uid, null, $dataKategori->kode);
                 } else if($dataKategori->kode == "lords-mobile"){
-                    $data = $apicheck->check($request->uid, null, 'Lords Mobile');
+                    $data = $apicheck->check($request->uid, null, $dataKategori->kode);
                 } else if($dataKategori->kode == "dragon-raja"){
-                    $data = $apicheck->check($request->uid, null, 'Dragon Raja');
+                    $data = $apicheck->check($request->uid, null, $dataKategori->kode);
                 } else if($dataKategori->kode == "marvel-super-war"){
-                    $data = $apicheck->check($request->uid, null, 'Marvel Super War');
+                    $data = $apicheck->check($request->uid, null, $dataKategori->kode);
                 } elseif ($dataKategori->kode == "call-of-duty") {
-                      $data = $apicheck->check($request->uid, null , 'Call Of Duty');
+                      $data = $apicheck->check($request->uid, null , $dataKategori->kode);
                 }
+
                 if($data['status']['code'] == 1){
                     return response()->json([
                         'status' => false,

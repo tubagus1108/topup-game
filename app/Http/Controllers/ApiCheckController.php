@@ -11,7 +11,7 @@ class ApiCheckController extends Controller
     {
     	$api = DB::table('setting_webs')->where('id',1)->first();
         $params = [
-            'api_key' => $api->topupindo_api,
+            // 'api_key' => $api->topupindo_api,
             'game'    => $game,
             'user_id' => $user_id,
             'zone_id' => $zone_id
@@ -19,11 +19,11 @@ class ApiCheckController extends Controller
 
         $result = $this->connect($params);
         // dd(ENV("KBRSTORE_API"));
-        // dd($result);
-        if($result['code'] == 200){
+        // dd($params);
+        if($result['status'] == true){
             return array(
                 'status' => array('code' => 200),
-                'data' => array('userNameGame' => $result['result']['username'])
+                'data' => array('userNameGame' => $result['data']['username'])
             );
         }else{
             return array(
@@ -34,18 +34,30 @@ class ApiCheckController extends Controller
 
     public function connect($data = null)
     {
-        $ch = curl_init();
-        curl_setopt($ch,CURLOPT_URL,'https://cekid.topupindo.my.id/api/v1/check-game');
-        // curl_setopt($ch,CURLOPT_HTTPHEADER,['Content-Type: application/x-www-form-urlencoded']);
-        curl_setopt($ch,CURLOPT_POST,true);
-        curl_setopt($ch,CURLOPT_POSTFIELDS,http_build_query($data));
-        curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
-        curl_setopt($ch,CURLOPT_FOLLOWLOCATION,true);
-        curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+        if (!is_array($data)) {
+            return null; // Mengembalikan null jika $data bukan array
+        }
 
-        $chresult = curl_exec($ch);
-        curl_close($ch);
-        $json_result = json_decode($chresult, true);
+        $game = isset($data['game']) ? $data['game'] : null;
+        $user_id = isset($data['user_id']) ? $data['user_id'] : null;
+        $zone_id = isset($data['zone_id']) ? $data['zone_id'] : null;
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://api-cek-id-game.vercel.app/api/game/{$game}?id={$user_id}&zone={$zone_id}",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+        ));
+
+        $response = curl_exec($curl);
+        curl_close($curl);
+        $json_result = json_decode($response, true);
         return $json_result;
     }
 }
