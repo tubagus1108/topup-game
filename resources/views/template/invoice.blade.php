@@ -29,11 +29,11 @@
                         </div>
                     </div>
                 </div>
-            
+
             <div class="hasil-cari">
                 <ul class="position-absolute resultsearch shadow dropdown-menu" aria-labelledby="dropsearchdown"></ul>
             </div>
-    
+
             <button class="navbar-toggler border-0 d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar">
               <span><i class="fa fa-bars-staggered text-light"></i></span>
             </button>
@@ -71,7 +71,7 @@
                 <p class="card-text">Rp {{ number_format(Auth::user()->balance, 0, ',', '.') }}</p>
              </div>
           </div>
-                    
+
           <div class"mt-2">
                                                           </div>
                         <button onclick="logout();" class="btn bg-white border-0 text-danger mt-2">Logout</button>
@@ -102,11 +102,11 @@
                         </div>
                     </div>
                 </div>
-            
+
             <div class="hasil-cari">
                 <ul class="position-absolute resultsearch shadow dropdown-menu" aria-labelledby="dropsearchdown"></ul>
             </div>
-    
+
             <button class="navbar-toggler border-0 d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar">
               <span><i class="fa fa-bars-staggered text-light"></i></span>
             </button>
@@ -157,11 +157,11 @@
                         </div>
                     </div>
                 </div>
-            
+
             <div class="hasil-cari">
                 <ul class="position-absolute resultsearch shadow dropdown-menu" aria-labelledby="dropsearchdown"></ul>
             </div>
-    
+
             <button class="navbar-toggler border-0 d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar">
               <span><i class="fa fa-bars-staggered text-light"></i></span>
             </button>
@@ -198,13 +198,13 @@
 <div class="content-body" style="height: auto;">
 			<div class="px-3 pt-3 mb-2">
 				@if(session('error'))
-			    
+
 			    <div class="alert alert-danger">
 			       <ul>
 			           <li>{{session('error')}}</li>
 			       </ul>
 			    </div>
-			    
+
 			    @endif
 			    @if ($errors->any())
                     <div class="alert alert-danger">
@@ -224,7 +224,7 @@
                                   <center><span class="badge bg-danger text-center mt-3">Scan QR Code diatas ini</span></center>
                               </div>
                             @endif
-				
+
 				<div class="row mt-3">
         			    <div class="col-12 col-md-4 col-lg-4">
             				<div class="card bg-card mb-3">
@@ -302,7 +302,7 @@
         <div class="col-12 col-md-6 col-lg-8">
             				<div class="card bg-card mb-3">
             				    <div class="card-body">
-            				        
+
                                     <div class="">
             				            <b class="">Detail Pembelian</b>
             				        </div>
@@ -340,7 +340,7 @@
 								@endif
 								@endif
                                                                                                 				        </div>
-            				        
+
                                 </div>
             				</div>
         				</div>
@@ -353,13 +353,13 @@
 				              </div>
 				              <a class="btn btn-primary btn-sm w-100 rounded" href="{{ !$config ? '' : $config->url_wa }}">Hubungi Kami</a>
 				          </div>
-				      </div>  
-				
+				      </div>
+
 			</div>
-			
+
 					</div>
-        
-        
+
+
 
 
 

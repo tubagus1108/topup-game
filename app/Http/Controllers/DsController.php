@@ -4,39 +4,40 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Berita;
-use Auth;
-
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class DsController extends Controller
 {
     public function dashboard()
     {
-        // return view('components.dashboarduser',[
-        //     'data' => \App\Models\Pembelian::where('username', Auth::user()->username)->get(),
-        //     'logoheader' => Berita::where('tipe', 'logoheader')->latest()->first(),
-        //     'logofooter' => Berita::where('tipe', 'logofooter')->latest()->first(),
-        // ]);
-        
-        return view('template.dashboard',[
-            'data' => \App\Models\Pembelian::where('username', Auth::user()->username)->get(),
-            'logoheader' => Berita::where('tipe', 'logoheader')->latest()->first(),
-            'logofooter' => Berita::where('tipe', 'logofooter')->latest()->first(),
+        $data = Cache::remember('dashboard_data:' . Auth::user()->username, 3600, function () {
+            return \App\Models\Pembelian::where('username', Auth::user()->username)->get();
+        });
+
+        return view('template.dashboard', [
+            'data' => $data,
+            'logoheader' => Cache::remember('logoheader_data', 3600, function () {
+                return Berita::where('tipe', 'logoheader')->latest()->first();
+            }),
+            'logofooter' => Cache::remember('logofooter_data', 3600, function () {
+                return Berita::where('tipe', 'logofooter')->latest()->first();
+            }),
         ]);
     }
-    
+
     public function editProfile()
     {
-        // return view('components.editprofile',[
-        // 'logoheader' => Berita::where('tipe', 'logoheader')->latest()->first(),
-        // 'logofooter' => Berita::where('tipe', 'logofooter')->latest()->first(),
-        // ]);
-        
-         return view('template.profile',[
-        'logoheader' => Berita::where('tipe', 'logoheader')->latest()->first(),
-        'logofooter' => Berita::where('tipe', 'logofooter')->latest()->first(),
+        return view('template.profile', [
+            'logoheader' => Cache::remember('logoheader_data', 3600, function () {
+                return Berita::where('tipe', 'logoheader')->latest()->first();
+            }),
+            'logofooter' => Cache::remember('logofooter_data', 3600, function () {
+                return Berita::where('tipe', 'logofooter')->latest()->first();
+            }),
         ]);
     }
-    
+ 
     public function saveEditProfile(Request $request)
     {
         $request->validate([
@@ -69,9 +70,12 @@ class DsController extends Controller
             $data['password'] = bcrypt($request->password);
             
         }
-        
-        \App\Models\User::where('id',Auth()->user()->id)->update($data);
-        
+        // Update the user's profile
+        \App\Models\User::where('id', Auth()->user()->id)->update($data);
+
+        // Clear the cache for the user's dashboard data
+        Cache::forget('dashboard_data:' . Auth::user()->username);
+
         return redirect()->back()->with('success', 'Berhasil mengedit profile!');
 
     }

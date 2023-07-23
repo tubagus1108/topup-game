@@ -45,42 +45,36 @@ class getCategories extends Command
         $arrGame = [];
         $arrPulsa = [];
 
-        foreach($res['data'] as $game){
-            if($game['category'] == "Games"){
-                array_push($arrGame,$game['brand']);
-            }else if($game['category'] == "Pulsa"){
-                array_push($arrPulsa, $game['brand']);
+        foreach ($res['data'] as $game) {
+            if ($game['category'] == "Games") {
+                $arrGame[] = $game['brand'];
+            } else if ($game['category'] == "Pulsa") {
+                $arrPulsa[] = $game['brand'];
             }
         }
         // dd($arrGame,$arrPulsa);
-        foreach(array_unique($arrGame) as $game){
-            try{
-                $category = new Kategori();
-                $category->nama = $game;
-                $category->brand = Str::lower($game);
-                $category->kode = $game = str_replace(' ', '-', Str::lower($game));
-                $category->thumbnail = null;
-                $category->tipe = "game";
-                // dd($category);
-                $category->save();
-            }catch(\Exception $e){
-                continue;
-            }
-        }
 
-        foreach(array_unique($arrPulsa) as $pulsa){
-            try{
-                $category = new Kategori();
-                $category->nama = $pulsa;
-                $category->brand = Str::lower($pulsa);
-                $category->kode = $pulsa = str_replace(' ', '-', Str::lower($pulsa));
-                $category->thumbnail = null;
-                $category->tipe = "pulsa";
-                // dd($category);
-                $category->save();
-            }catch(\Exception $e){
+        $this->saveCategories(array_unique($arrGame), 'game');
+        $this->saveCategories(array_unique($arrPulsa), 'pulsa');
+    }
+
+    private function saveCategories(array $brands, string $type)
+    {
+        foreach ($brands as $brand) {
+            try {
+                Kategori::firstOrCreate([
+                    'nama' => $brand,
+                    'tipe' => $type
+                ], [
+                    'brand' => Str::lower($brand),
+                    'kode' => str_replace(' ', '-', Str::lower($brand)),
+                    'thumbnail' => null
+                ]);
+            } catch (\Exception $e) {
                 continue;
             }
         }
     }
+
+
 }

@@ -14,8 +14,8 @@ class KategoriController extends Controller
 
     public function store(Request $request)
     {
-        
-        
+
+
         $request->validate([
             'thumbnail' => 'required|image|mimes:jpg,png',
             'banner' => 'required|image|mimes:jpg,png',
@@ -29,12 +29,12 @@ class KategoriController extends Controller
 
         $file = $request->file('thumbnail');
         $folder = 'assets/thumbnail';
-        $file->move($folder, $file->getClientOriginalName());    
-        
+        $file->move($folder, $file->getClientOriginalName());
+
         $file2 = $request->file('banner');
         $folder2 = 'assets/banner_game';
         $file2->move($folder2, $file2->getClientOriginalName());
-        
+
         $kategori = new Kategori();
         $kategori->nama = $request->nama;
         $kategori->sub_nama = $request->sub_nama;
@@ -76,7 +76,11 @@ class KategoriController extends Controller
 public function detail($id)
     {
         $data = Kategori::where('id', $id)->first();
-        
+
+        $selected = function ($value, $selectedValue) {
+            return $value == $selectedValue ? 'selected' : '';
+        };
+
         $send = "
                 <form action='".route("kategori.detail.update", [$id])."' method='POST' enctype='multipart/form-data'>
                     <input type='hidden' name='_token' value='".csrf_token()."'>
@@ -85,38 +89,38 @@ public function detail($id)
                         <div class='col-lg-10'>
                             <input type='text' class='form-control' value='".$data->nama. "' name='kategori'>
                         </div>
-                    </div>    
-                         <div class='mb-3 row'>
-                <label class='col-lg-2 col-form-label'>Tipe</label>
-                <div class='col-lg-10'>
-                    <select class='form-select' name='tipe'>
-                        <option value='game'>Game</option>
-                        <option value='voucher'>Voucher</option>
-                        <option value='pulsa'>Pulsa</option>
-                        <option value='e-money'>E-Money</option>
-                        <option value='streamingapp'>Streaming APP</option>
-                        <option value='joki'>Joki</option>
-                    </select>
-                </div>
-            </div>    
+                    </div>
+                    <div class='mb-3 row'>
+                        <label class='col-lg-2 col-form-label'>Tipe</label>
+                        <div class='col-lg-10'>
+                            <select class='form-select' name='tipe'>
+                                <option value='game' {$selected('game', $data->tipe)}>Game</option>
+                                <option value='voucher' {$selected('voucher', $data->tipe)}>Voucher</option>
+                                <option value='pulsa' {$selected('pulsa', $data->tipe)}>Pulsa</option>
+                                <option value='e-money' {$selected('e-money', $data->tipe)}>E-Money</option>
+                                <option value='streamingapp' {$selected('streamingapp', $data->tipe)}>Streaming APP</option>
+                                <option value='joki' {$selected('joki', $data->tipe)}>Joki</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class='mb-3 row'>
                         <label class='col-lg-2 col-form-label' for='example-fileinput'>Url</label>
                         <div class='col-lg-10'>
                             <input type='text' class='form-control' value='" . $data->kode . "' name='kode'>
                         </div>
-                    </div> 
+                    </div>
                     <div class='mb-3 row'>
                         <label class='col-lg-2 col-form-label' for='example-fileinput'>Sub Nama</label>
                         <div class='col-lg-10'>
                             <input type='text' class='form-control' value='" . $data->sub_nama . "' name='sub_nama'>
                         </div>
-                    </div> 
+                    </div>
                     <div class='mb-3 row'>
                         <label class='col-lg-2 col-form-label' for='example-fileinput'>Brand</label>
                         <div class='col-lg-10'>
                             <input type='text' class='form-control' value='" . $data->brand . "' name='brand'>
                         </div>
-                    </div> 
+                    </div>
                     <div class='mb-3 row'>
                         <label class='col-lg-2 col-form-label' for='example-fileinput'>Deskripsi Game</label>
                         <div class='col-lg-10'>
@@ -141,55 +145,54 @@ public function detail($id)
                             <input type='file' class='form-control' value='" . $data->banner . "' name='banner'>
                         </div>
                     </div>
-                         <div class='mb-3 row'>
-                <label class='col-lg-2 col-form-label'>Sistem Target</label>
-                <div class='col-lg-10'>
-                    <select class='form-select' id='customRadio1' name='serverOption'>
-                        <option value='tidak'>1. Target (User ID)</option>
-                        <option value='ya'>2. Target (User ID / Server ID</option>
-                        <option value='tidak'>3. Custom (Via Code)</option>
-                    </select>
-                </div>
-            </div>
+                    <div class='mb-3 row'>
+                        <label class='col-lg-2 col-form-label'>Sistem Target</label>
+                        <div class='col-lg-10'>
+                            <select class='form-select' id='customRadio1' name='serverOption'>
+                                <option value='tidak' {$selected('tidak', $data->serverOption)}>1. Target (User ID)</option>
+                                <option value='ya' {$selected('ya', $data->serverOption)}>2. Target (User ID / Server ID)</option>
+                                <option value='custom' {$selected('custom', $data->serverOption)}>3. Custom (Via Code)</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class='mb-3 row'>
                         <label class='col-lg-2 col-form-label' for='example-fileinput'>Status</label>
                         <div class='col-lg-10'>
                             <select class='form-control' name='status'>
-                                <option value='active'>Active</option>
-                                <option value='unactive'>Unactive</option>
+                                <option value='active' {$selected('active', $data->status)}>Active</option>
+                                <option value='unactive' {$selected('unactive', $data->status)}>Unactive</option>
                             </select>
                         </div>
-                    </div>                    
+                    </div>
                     <div class='modal-footer'>
                         <button type='button' class='btn btn-danger' data-bs-dismiss='modal'>Close</button>
                         <button type='submit' class='btn btn-primary'>Simpan</button>
                     </div>
                 </form>
         ";
+        return $send;
+    }
 
-        return $send;        
-    }  
-    
     public function patch(Request $request, $id)
     {
         if($request->file('thumbnail')){
             $file = $request->file('thumbnail');
             $folder = 'assets/thumbnail';
-            $file->move($folder, $file->getClientOriginalName());      
+            $file->move($folder, $file->getClientOriginalName());
             Kategori::where('id', $id)->update([
                 'thumbnail' => "/".$folder."/".$file->getClientOriginalName()
             ]);
         }
-        
+
         if($request->file('banner')){
             $file2 = $request->file('banner');
             $folder2 = 'assets/banner_game';
-            $file2->move($folder2, $file2->getClientOriginalName());      
+            $file2->move($folder2, $file2->getClientOriginalName());
             Kategori::where('id', $id)->update([
                 'banner' => "/".$folder2."/".$file2->getClientOriginalName()
             ]);
         }
-        
+
         $pembayaran = Kategori::where('id', $id)->update([
             'nama' => $request->kategori,
             'sub_nama' => $request->sub_nama,
@@ -201,7 +204,7 @@ public function detail($id)
             'deskripsi_game' => str_replace("\r\n","<br>",$request->deskripsi_game),
             'deskripsi_field' => str_replace("\r\n","<br>",$request->deskripsi_field)
         ]);
-           
-        return back()->with('success', 'Berhasil update kategori');        
-    }        
+
+        return back()->with('success', 'Berhasil update kategori');
+    }
 }

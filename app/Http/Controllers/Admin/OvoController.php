@@ -11,6 +11,7 @@ use Namdevel\Ovo as Login;
 use App\Models\Ovo;
 use App\Models\History_Ovo;
 use Exception;
+use Illuminate\Support\Facades\Cache;
 
 class OvoController extends Controller
 {
@@ -76,31 +77,40 @@ class OvoController extends Controller
 
     public function getTransaction()
     {
-        $authToken = Ovo::select('AuthToken')->latest()->first();
+        $authToken = Cache::remember('ovo_auth_token', 3600, function () {
+            return Ovo::select('AuthToken')->latest()->first();
+        });
 
         $init = new Login($authToken->AuthToken);
         $menghapusTransaksiLama = History_Ovo::truncate();
-        foreach ($init->transactionHistory() as $data) {
-            try {
-                foreach ($data->orders[0]->complete as $transaction => $key) {
-                    $dataArray = [];
-                    $data = json_decode(json_encode($key), true);
-                    $dataMasuk = $data['transaction_amount'];
-                    $incomingTransfer = $data['transaction_type'];
-                    if ($incomingTransfer == "INCOMING TRANSFER") { //cek apakah ada status incoming transfer jika ada push ke array
-                        array_push($dataArray, $dataMasuk);
+
+        $dataHistory = Cache::remember('ovo_transaction_history', 3600, function () use ($init) {
+            $history = [];
+            foreach ($init->transactionHistory() as $data) {
+                try {
+                    foreach ($data->orders[0]->complete as $transaction => $key) {
+                        $data = json_decode(json_encode($key), true);
+                        $incomingTransfer = $data['transaction_type'];
+                        if ($incomingTransfer == "INCOMING TRANSFER") { //cek apakah ada status incoming transfer jika ada push ke array
+                            $history[] = [
+                                'tanggal_transaksi' => $data['transaction_date'],
+                                'jumlah_transaksi' => $data['transaction_amount'],
+                                'tipe_transaksi' => $data['transaction_type'],
+                                'keterangan' => $data['desc1']
+                            ];
+                        }
                     }
-                    History_Ovo::insert([
-                        'tanggal_transaksi' => $data['transaction_date'],
-                        'jumlah_transaksi' => $data['transaction_amount'],
-                        'tipe_transaksi' => $data['transaction_type'],
-                        'keterangan' => $data['desc1']
-                    ]);
+                } catch (Exception $e) {
+                    // Log or handle the exception, if needed
                 }
-            } catch (Exception $e) {
-                return back()->with('status', 'Berhasil refresh data');
             }
-        }
-        
+            return $history;
+        });
+
+        // Store the processed transaction history in the database
+        History_Ovo::insert($dataHistory);
+
+        return back()->with('status', 'Berhasil refresh data');
     }
+
 }
