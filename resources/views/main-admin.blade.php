@@ -206,7 +206,8 @@
                         </ul> <!-- end navbar-->
                     </div> <!-- end .collapsed-->
                 </nav>
-            </div> <!-- end container-fluid -->
+            </div> 
+            <!-- end container-fluid -->
         </div> <!-- end topnav-->
 
         <!-- ============================================================== -->
@@ -230,7 +231,7 @@
                         <div class="col-md-6">
                             <script>
                                 document.write(new Date().getFullYear())
-                            </script> &copy; {{ ENV('APP_NAME') }} by <a href="https://cekstore.com/">CEKSTORE.COM</a>
+                            </script> &copy; {{ ENV('APP_NAME') }} by <a href="https://tubagusofficial.my.id/">Tubagus Dev</a>
                         </div>
                         <div class="col-md-6">
                             <div class="text-md-end footer-links d-none d-sm-block">
