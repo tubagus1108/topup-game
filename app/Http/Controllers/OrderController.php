@@ -20,24 +20,59 @@ use App\Http\Controllers\MethodController;
 use App\Http\Controllers\TriPayController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 
 class OrderController extends Controller
 {
     public function create(Kategori $kategori)
     {
-        $data = Kategori::where('kode', $kategori->kode)->select('nama', 'server_id', 'thumbnail', 'id', 'kode', 'petunjuk','deskripsi_game','deskripsi_field','banner','tipe')->first();
-        if($data == null) return back();
+        // Create a unique cache key based on the kategori kode and user role (if authenticated)
+        $cacheKey = 'create_' . $kategori->kode . '_' . (Auth::check() ? Auth::user()->role : 'guest');
 
-        if(Auth::check()){
-            if(Auth::user()->role == "Member"){
-                $layanan = Layanan::where('kategori_id', $data->id)->where('status', 'available')->select('id', 'layanan', 'harga_member AS harga')->orderBy('harga', 'asc')->get();
-            }else if(Auth::user()->role == "Platinum"){
-                $layanan = Layanan::where('kategori_id', $data->id)->where('status', 'available')->select('id', 'layanan', 'harga_platinum AS harga')->orderBy('harga', 'asc')->get();
-            }else if(Auth::user()->role == "Gold" || Auth::user()->role == "Admin"){
-                $layanan = Layanan::where('kategori_id', $data->id)->where('status', 'available')->select('id', 'layanan', 'harga_gold AS harga')->orderBy('harga', 'asc')->get();
+        // Check if data exists in Redis cache
+        if (Cache::has($cacheKey)) {
+            $cachedData = Cache::get($cacheKey);
+            $data = $cachedData['data'];
+            $layanan = $cachedData['layanan'];
+        } else {
+            $data = Kategori::where('kode', $kategori->kode)
+                ->select('nama', 'server_id', 'thumbnail', 'id', 'kode', 'petunjuk', 'deskripsi_game', 'deskripsi_field', 'banner', 'tipe')
+                ->first();
+
+            if ($data == null) {
+                return back();
             }
-        }else{
-            $layanan = Layanan::where('kategori_id', $data->id)->where('status', 'available')->select('id', 'layanan','product_logo', 'harga')->orderBy('harga', 'asc')->get();
+
+            if (Auth::check()) {
+                if (Auth::user()->role == "Member") {
+                    $layanan = Layanan::where('kategori_id', $data->id)
+                        ->where('status', 'available')
+                        ->select('id', 'layanan', 'harga_member AS harga')
+                        ->orderBy('harga', 'asc')
+                        ->get();
+                } else if (Auth::user()->role == "Platinum") {
+                    $layanan = Layanan::where('kategori_id', $data->id)
+                        ->where('status', 'available')
+                        ->select('id', 'layanan', 'harga_platinum AS harga')
+                        ->orderBy('harga', 'asc')
+                        ->get();
+                } else if (Auth::user()->role == "Gold" || Auth::user()->role == "Admin") {
+                    $layanan = Layanan::where('kategori_id', $data->id)
+                        ->where('status', 'available')
+                        ->select('id', 'layanan', 'harga_gold AS harga')
+                        ->orderBy('harga', 'asc')
+                        ->get();
+                }
+            } else {
+                $layanan = Layanan::where('kategori_id', $data->id)
+                    ->where('status', 'available')
+                    ->select('id', 'layanan', 'product_logo', 'harga')
+                    ->orderBy('harga', 'asc')
+                    ->get();
+            }
+
+            // Store the data in Redis cache with a specific expiration time (in seconds)
+            Cache::put($cacheKey, ['data' => $data, 'layanan' => $layanan], 3600); // Cache data for 1 hour (3600 seconds)
         }
 
         return view('template.order', [
@@ -51,59 +86,67 @@ class OrderController extends Controller
 
     public function price(Request $request)
     {
-        if(Auth::check()){
-            if(Auth::user()->role == "Member"){
-                $data = Layanan::where('id', $request->nominal)->select('harga_member AS harga')->first();
-            }else if(Auth::user()->role == "Platinum"){
-                $data = Layanan::where('id', $request->nominal)->select('harga_platinum AS harga')->first();
-            }else if(Auth::user()->role == "Gold" || Auth::user()->role == "Admin"){
-                $data = Layanan::where('id', $request->nominal)->select('harga_gold AS harga')->first();
+        // Create a unique cache key based on the nominal and voucher values
+        $cacheKey = 'price_' . $request->nominal . '_' . $request->voucher;
+
+        // Check if data exists in Redis cache
+        if (Cache::has($cacheKey)) {
+            $cachedData = Cache::get($cacheKey);
+            $data = $cachedData['data'];
+        } else {
+            if (Auth::check()) {
+                if (Auth::user()->role == "Member") {
+                    $data = Layanan::where('id', $request->nominal)->select('harga_member AS harga')->first();
+                } else if (Auth::user()->role == "Platinum") {
+                    $data = Layanan::where('id', $request->nominal)->select('harga_platinum AS harga')->first();
+                } else if (Auth::user()->role == "Gold" || Auth::user()->role == "Admin") {
+                    $data = Layanan::where('id', $request->nominal)->select('harga_gold AS harga')->first();
+                }
+            } else {
+                $data = Layanan::where('id', $request->nominal)->select('harga AS harga')->first();
             }
-        }else{
-            $data = Layanan::where('id', $request->nominal)->select('harga AS harga')->first();
+
+            // Store the data in Redis cache with a specific expiration time (in seconds)
+            Cache::put($cacheKey, ['data' => $data], 3600); // Cache data for 1 hour (3600 seconds)
         }
 
-        if(isset($request->voucher)){
+        if (isset($request->voucher)) {
             $voucher = Voucher::where('kode', $request->voucher)->first();
 
-            if(!$voucher){
+            if (!$voucher) {
+                // No voucher found, no changes to the price
                 $data->harga = $data->harga;
-            }else{
-                if($voucher->stock == 0){
+            } else {
+                if ($voucher->stock == 0) {
+                    // Voucher is out of stock, no changes to the price
                     $data->harga = $data->harga;
-                }else{
+                } else {
                     $potongan = $data->harga * ($voucher->promo / 100);
-                    if($potongan > $voucher->max_potongan){
+                    if ($potongan > $voucher->max_potongan) {
                         $potongan = $voucher->max_potongan;
                     }
 
                     $data->harga = $data->harga - $potongan;
                 }
             }
-
         }
 
         return response()->json([
             'status' => true,
-            'harga' => "Rp. ".number_format($data->harga, 0, '.', ',')
+            'harga' => "Rp. " . number_format($data->harga, 0, '.', ',')
         ]);
     }
 
     public function confirm(Request $request)
     {
-
-        if($request->ktg_tipe !== 'joki'){
-
+        if ($request->ktg_tipe !== 'joki') {
             $request->validate([
                 'uid' => 'required',
                 'service' => 'required|numeric',
                 'payment_method' => 'required',
                 'nomor' => 'required|numeric',
-
             ]);
-
-        }else{
-
+        } else {
             $request->validate([
                 'email_joki' => 'required',
                 'password_joki' => 'required',
@@ -114,140 +157,144 @@ class OrderController extends Controller
                 'service' => 'required|numeric',
                 'payment_method' => 'required',
                 'nomor' => 'required|numeric',
-
             ]);
-
         }
 
+        $item = Layanan::where('id', $request->service)->first();
+        $produk = Kategori::where('id', $item->kategori_id)->first();
 
-           $item = Layanan::where('id',$request->service)->first();
+        $dataLayanan = $this->getLayananData($request->service);
 
-           $produk = Kategori::where('id',$item->kategori_id)->first();
+        if (isset($request->voucher)) {
+            $this->applyVoucherDiscount($dataLayanan, $request->voucher);
+        }
 
+        $dataKategori = Kategori::where('id', $dataLayanan->kategori_id)->select('kode')->first();
+        $daftarGameValidasi = ['call-of-duty', 'free-fire', 'lords-mobile', 'marvel-super-war', 'mlbb', 'mobile-legends', 'point-blank', 'arena-of-valor', 'dragon-raja'];
 
+        if (in_array($dataKategori->kode, $daftarGameValidasi)) {
+            $data = $this->checkGame($request->uid, $request->zone, $dataKategori->kode);
 
-            $apicheck = new ApiCheckController();
-
-            if(Auth::check()){
-                if(Auth::user()->role == "Member"){
-                    $dataLayanan = Layanan::where('id', $request->service)->select('harga_member AS harga', 'kategori_id')->first();
-                }else if(Auth::user()->role == "Platinum"){
-                    $dataLayanan = Layanan::where('id', $request->service)->select('harga_platinum AS harga', 'kategori_id')->first();
-                }else if(Auth::user()->role == "Gold" || Auth::user()->role == "Admin"){
-                    $dataLayanan = Layanan::where('id', $request->service)->select('harga_gold AS harga', 'kategori_id')->first();
-                }
-            }else{
-                $dataLayanan = Layanan::where('id', $request->service)->select('harga AS harga', 'kategori_id')->first();
-            }
-
-            if(isset($request->voucher)){
-                $voucher = Voucher::where('kode', $request->voucher)->first();
-
-                if(!$voucher){
-                    $dataLayanan->harga = $dataLayanan->harga;
-                }else{
-                    if($voucher->stock == 0){
-                        $dataLayanan->harga = $dataLayanan->harga;
-                    }else{
-                        $potongan = $dataLayanan->harga * ($voucher->promo / 100);
-                        if($potongan > $voucher->max_potongan){
-                            $potongan = $voucher->max_potongan;
-                        }
-
-                        $dataLayanan->harga = $dataLayanan->harga - $potongan;
-                    }
-                }
-
-            }
-
-            $dataKategori = Kategori::where('id', $dataLayanan->kategori_id)->select('kode')->first();
-
-            $daftarGameValidasi = ['call-of-duty', 'free-fire', 'lords-mobile', 'marvel-super-war', 'mlbb', 'mobile-legends', 'point-blank','arena-of-valor','dragon-raja'];
-
-            if(in_array($dataKategori->kode, $daftarGameValidasi)){
-                if ($dataKategori->kode == 'mobile-legends') {
-                    $data = $apicheck->check($request->uid, $request->zone, $dataKategori->kode);
-                } else if ($dataKategori->kode == 'mlbb') {
-                     $data = $apicheck->check($request->uid, $request->zone, $dataKategori->kode);
-                } else if($dataKategori->kode == "free-fire"){
-                    $data = $apicheck->check($request->uid, null, $dataKategori->kode);
-                } else if($dataKategori->kode == "point-blank"){
-                    $data = $apicheck->check($request->uid, null, $dataKategori->kode);
-                } else if($dataKategori->kode == "arena-of-valor"){
-                    $data = $apicheck->check($request->uid, null, $dataKategori->kode);
-                } else if($dataKategori->kode == "lords-mobile"){
-                    $data = $apicheck->check($request->uid, null, $dataKategori->kode);
-                } else if($dataKategori->kode == "dragon-raja"){
-                    $data = $apicheck->check($request->uid, null, $dataKategori->kode);
-                } else if($dataKategori->kode == "marvel-super-war"){
-                    $data = $apicheck->check($request->uid, null, $dataKategori->kode);
-                } elseif ($dataKategori->kode == "call-of-duty") {
-                      $data = $apicheck->check($request->uid, null , $dataKategori->kode);
-                }
-
-                if($data['status']['code'] == 1){
-                    return response()->json([
-                        'status' => false,
-                        'data' => isset($data['data']['msg']) ? $data['data']['msg'] : 'Username tidak ditemukan atau coba lagi nanti'
-                    ]);
-                }
-                $username = $data['data']['userNameGame'];
-
-                 $sendData = "<b>Data Order.</b><br><hr>
-                                Nickname : <b><span id='nick'>".urldecode($username)."</span></b><br>
-                                ID : <b>$request->uid $request->zone</b><br><br>
-                                <b>Ringkasan Order</b><hr>
-                                <b>".$produk->nama."</b><br>
-                                Layanan : ".$item->layanan."<br>
-                                Harga : Rp. ".number_format($dataLayanan->harga, 0, '.', ',').
-                                "<br>Metode Pembayaran : ".strtoupper($request->payment_method).
-                                "<br><br>Catatan : Harga diatas belum termasuk biaya admin";
-
+            if ($data['status']['code'] == 1) {
                 return response()->json([
-                    'status' => true,
-                    'data' => $sendData
-                ]);
-            }else{
-
-                if($request->ktg_tipe !== 'joki'){
-
-                    $sendData = "<b>Data Order.</b><br><hr>
-                                ID : <span id='nick'>$request->uid</span><br><br>
-                                <b>Ringkasan Order<b><hr>
-                                <b>".$produk->nama."</b><br>
-                                Layanan : ".$item->layanan."<br>
-                                Harga : Rp. ".number_format($dataLayanan->harga, 0, '.', ',').
-                                "<br>Metode Pembayaran : ".strtoupper($request->payment_method).
-                                "<br><br>Catatan : Harga diatas belum termasuk biaya admin";
-                }else{
-
-                    $sendData = "<b>Data Order.</b><br><hr>
-                                Email : $request->email_joki<br>
-                                 Password : $request->password_joki<br>
-                                 Login Via : $request->loginvia_joki<br>
-                                 Nickname : $request->nickname_joki<br>
-                                 Request : $request->request_joki<br>
-                                 Catatan : $request->catatan_joki<br><br>
-                                <b>Ringkasan Order</b><hr>
-                                <b>".$produk->nama."</b><br>
-                                Layanan : ".$item->layanan."<br>
-                                Harga : Rp. ".number_format($dataLayanan->harga, 0, '.', ',').
-                                "<br>Metode Pembayaran : ".strtoupper($request->payment_method).
-                                "<br><br>Catatan : Harga diatas belum termasuk biaya admin";
-
-
-                }
-
-
-
-
-                return response()->json([
-                    'status' => true,
-                    'data' => $sendData
+                    'status' => false,
+                    'data' => isset($data['data']['msg']) ? $data['data']['msg'] : 'Username tidak ditemukan atau coba lagi nanti'
                 ]);
             }
 
+            $username = $data['data']['userNameGame'];
+            $sendData = $this->generateGameDataOrder($username, $request, $dataLayanan, $produk, $item);
+
+        } else {
+            if ($request->ktg_tipe !== 'joki') {
+                $sendData = $this->generateNonGameDataOrder($request, $dataLayanan, $produk, $item);
+            } else {
+                $sendData = $this->generateJokiDataOrder($request, $dataLayanan, $produk, $item);
+            }
+        }
+
+        return response()->json([
+            'status' => true,
+            'data' => $sendData
+        ]);
     }
+
+    private function getLayananData($service)
+    {
+        if (Auth::check()) {
+            if (Auth::user()->role == "Member") {
+                return Layanan::where('id', $service)->select('harga_member AS harga', 'kategori_id')->first();
+            } else if (Auth::user()->role == "Platinum") {
+                return Layanan::where('id', $service)->select('harga_platinum AS harga', 'kategori_id')->first();
+            } else if (Auth::user()->role == "Gold" || Auth::user()->role == "Admin") {
+                return Layanan::where('id', $service)->select('harga_gold AS harga', 'kategori_id')->first();
+            }
+        } else {
+            return Layanan::where('id', $service)->select('harga AS harga', 'kategori_id')->first();
+        }
+    }
+
+    private function applyVoucherDiscount($dataLayanan, $voucherCode)
+    {
+        $voucher = Voucher::where('kode', $voucherCode)->first();
+
+        if (!$voucher || $voucher->stock == 0) {
+            return;
+        }
+
+        $potongan = $dataLayanan->harga * ($voucher->promo / 100);
+        if ($potongan > $voucher->max_potongan) {
+            $potongan = $voucher->max_potongan;
+        }
+
+        $dataLayanan->harga -= $potongan;
+    }
+
+    private function checkGame($uid, $zone, $kode)
+    {
+        $cacheKey = 'game_check_' . md5($uid . $zone . $kode);
+
+        if (Cache::has($cacheKey)) {
+            return Cache::get($cacheKey);
+        }
+
+        $apicheck = new ApiCheckController();
+        $data = $apicheck->check($uid, $zone, $kode);
+
+        // Store the data in Redis cache with a specific expiration time (in seconds)
+        Cache::put($cacheKey, $data, 3600); // Cache data for 1 hour (3600 seconds)
+
+        return $data;
+    }
+
+    private function generateGameDataOrder($username, $request, $dataLayanan, $produk, $item)
+    {
+        $sendData = "<b>Data Order.</b><br><hr>
+                    Nickname : <b><span id='nick'>" . urldecode($username) . "</span></b><br>
+                    ID : <b>{$request->uid} {$request->zone}</b><br><br>
+                    <b>Ringkasan Order</b><hr>
+                    <b>{$produk->nama}</b><br>
+                    Layanan : {$item->layanan}<br>
+                    Harga : Rp. " . number_format($dataLayanan->harga, 0, '.', ',') .
+                    "<br>Metode Pembayaran : " . strtoupper($request->payment_method) .
+                    "<br><br>Catatan : Harga diatas belum termasuk biaya admin";
+
+        return $sendData;
+    }
+
+    private function generateNonGameDataOrder($request, $dataLayanan, $produk, $item)
+    {
+        $sendData = "<b>Data Order.</b><br><hr>
+                    ID : <span id='nick'>{$request->uid}</span><br><br>
+                    <b>Ringkasan Order</b><hr>
+                    <b>{$produk->nama}</b><br>
+                    Layanan : {$item->layanan}<br>
+                    Harga : Rp. " . number_format($dataLayanan->harga, 0, '.', ',') .
+                    "<br>Metode Pembayaran : " . strtoupper($request->payment_method) .
+                    "<br><br>Catatan : Harga diatas belum termasuk biaya admin";
+
+        return $sendData;
+    }
+
+    private function generateJokiDataOrder($request, $dataLayanan, $produk, $item)
+    {
+        $sendData = "<b>Data Order.</b><br><hr>
+                    Email : {$request->email_joki}<br>
+                    Password : {$request->password_joki}<br>
+                    Login Via : {$request->loginvia_joki}<br>
+                    Nickname : {$request->nickname_joki}<br>
+                    Request : {$request->request_joki}<br>
+                    Catatan : {$request->catatan_joki}<br><br>
+                    <b>Ringkasan Order</b><hr>
+                    <b>{$produk->nama}</b><br>
+                    Layanan : {$item->layanan}<br>
+                    Harga : Rp. " . number_format($dataLayanan->harga, 0, '.', ',') .
+                    "<br>Metode Pembayaran : " . strtoupper($request->payment_method) .
+                    "<br><br>Catatan : Harga diatas belum termasuk biaya admin";
+
+        return $sendData;
+    }
+
 
     public function store(Request $request)
     {

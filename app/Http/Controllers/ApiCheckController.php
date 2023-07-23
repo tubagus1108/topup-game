@@ -4,30 +4,40 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class ApiCheckController extends Controller
 {
     public function check($user_id = null, $zone_id = null, $game = null)
     {
-    	$api = DB::table('setting_webs')->where('id',1)->first();
+        $api = DB::table('setting_webs')->where('id', 1)->first();
         $params = [
-            // 'api_key' => $api->topupindo_api,
-            'game'    => $game,
+            'game' => $game,
             'user_id' => $user_id,
             'zone_id' => $zone_id
         ];
 
-        $result = $this->connect($params);
-        // dd(ENV("KBRSTORE_API"));
-        // dd($params);
-        if($result['status'] == true){
+        // Create a unique cache key based on the parameters
+        $cacheKey = 'check_' . implode('_', $params);
+
+        // Check if data exists in Redis cache
+        if (Cache::has($cacheKey)) {
+            $result = Cache::get($cacheKey);
+        } else {
+            $result = $this->connect($params);
+
+            // Store the data in Redis cache with a specific expiration time (in seconds)
+            Cache::put($cacheKey, $result, 3600); // Cache data for 1 hour (3600 seconds)
+        }
+
+        if ($result['status'] == true) {
             return array(
                 'status' => array('code' => 200),
                 'data' => array('userNameGame' => $result['data']['username'])
             );
-        }else{
+        } else {
             return array(
-                'status'     => array('code' => 1)
+                'status' => array('code' => 1)
             );
         }
     }
@@ -60,4 +70,5 @@ class ApiCheckController extends Controller
         $json_result = json_decode($response, true);
         return $json_result;
     }
+
 }
