@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\Kategori;
 use App\Http\Controllers\digiFlazzController;
-use Str;
+use Illuminate\Support\Str;
 class getCategories extends Command
 {
     /**
@@ -61,6 +61,13 @@ class getCategories extends Command
     private function saveCategories(array $brands, string $type)
     {
         foreach ($brands as $brand) {
+            // dd([
+            //     "nama" => $brand,
+            //     'brand' => $brand,
+            //     'tipe' => $type,
+            //     "kode" => str_replace(' ', '-', Str::lower($brand)),
+            //     "thumbnail" => null
+            // ]);
             try {
                 Kategori::firstOrCreate([
                     'nama' => $brand,

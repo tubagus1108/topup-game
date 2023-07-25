@@ -23,15 +23,13 @@ class indexController extends Controller
                 'popup' => Berita::where('tipe', 'popup')->latest()->first(),
                 'pay_method' => \App\Models\Method::all()
             ];
-
             // Store the data in Redis cache with a specific expiration time (in seconds)
             Cache::put('template_data', $data, 3600); // Cache data for 1 hour (3600 seconds)
         }
-
+        
         return view('template.index', $data);
     }
-
-    
+   
     public function cariIndex(Request $request)
     {
         if ($request->ajax()) {

@@ -16,12 +16,20 @@ class CreateLayanansTable extends Migration
         Schema::create('layanans', function (Blueprint $table) {
             $table->id();
             $table->string('kategori_id');
-            $table->string('layanan');
-            $table->string('provider_id');
-            $table->bigInteger('harga');
-            $table->integer('profit');
-            $table->longText('catatan');
-            $table->string('status');
+            $table->string('layanan')->nullable();
+            $table->string('provider_id')->nullable();
+            $table->unsignedBigInteger('harga')->nullable();
+            $table->unsignedBigInteger('harga_member')->nullable();
+            $table->unsignedBigInteger('harga_platinum')->nullable();
+            $table->unsignedBigInteger('harga_gold')->nullable();
+            $table->integer('profit')->nullable();
+            $table->integer('profit_member')->nullable();
+            $table->integer('profit_platinum')->nullable();
+            $table->integer('profit_gold')->nullable();
+            $table->longText('catatan')->nullable();
+            $table->string('status')->nullable();
+            $table->string('provider')->nullable();
+            $table->string('product_logo')->nullable();
             $table->timestamps();
         });
     }

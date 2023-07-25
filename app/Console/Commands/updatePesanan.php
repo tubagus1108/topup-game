@@ -12,6 +12,7 @@ use App\Http\Controllers\ApiGamesController;
 use App\Http\Controllers\JulyhyusController;
 use App\Http\Controllers\iPaymuController;
 use App\Models\Pembayaran;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 
@@ -48,7 +49,7 @@ class updatePesanan extends Command
      */
     public function handle()
     {
-        $api = \DB::table('setting_webs')->where('id',1)->first();
+        $api = DB::table('setting_webs')->where('id',1)->first();
         $pesanan = Pembelian::Where('status', 'Menunggu')
                              ->orWhere('status', 'Sukses')
                              ->get();
@@ -122,7 +123,7 @@ class updatePesanan extends Command
 
     public function msg($nomor, $msg)
     {
-        $api = \DB::table('setting_webs')->where('id',1)->first();
+        $api = DB::table('setting_webs')->where('id',1)->first();
 
         $data = [
             // 'api_key' => $api->wa_key,
